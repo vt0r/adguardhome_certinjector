@@ -4,7 +4,7 @@ It's a simple ruby script that automates LetsEncrypt certificate injection
 
 Usually, you'd run this after your `certbot` renewal as part of your `--post-hook`, allowing you to automatically inject the new key and cert chain into AdGuardHome's YAML config file (example below).
 
-### Recommended:Automatic mode (only works with certbot)
+### Recommended: Automatic mode (only works with certbot)
 There are only two options, but both are required:
 ```
 Usage: ./adguard_letsencrypt.rb [options]
