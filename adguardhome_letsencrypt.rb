@@ -30,12 +30,18 @@ args = OptionParser.new do |opts|
     options['domain'] = d
   end
 
+  opts.on('-k', '--privkey PATH', 'Path to the private key') do |k|
+    options['keypath'] = k
+  end
+  opts.on('-f', '--fullchain PATH', 'Path to the fullchain file') do |f|
+    options['fullchainpath'] = f
+  end
   options['help_summary'] = opts
 end
 args.parse!
 
 # Validate our argument input
-if options['configfile'].nil? || options['domain'].nil?
+if options['configfile'].nil? || (options['domain'].nil?) && (options['keypath'].nil? || options['fullchainpath'].nil?)
   puts options['help_summary']
   raise OptionParser::MissingArgument
 end
@@ -43,6 +49,10 @@ end
 # Use our input to set some variables
 configfile = options['configfile']
 domain = options['domain']
+if !(options['keypath'].nil? || options['fullchainpath'].nil?)
+  keypath = options['keypath']
+  fullchainpath = options['fullchainpath']
+end
 
 # Load the configuration file data
 config = YAML.load_file(configfile)
@@ -55,8 +65,13 @@ current_cert = config['tls']['certificate_chain']
 le_cert_path = "/etc/letsencrypt/live/#{domain}"
 
 # Read the new key/cert contents from the cert path
-new_key = File.open("#{le_cert_path}/privkey.pem").read.chop
-new_cert = File.open("#{le_cert_path}/fullchain.pem").read.chop
+if options['keypath'].nil? || options['fullchainpath'].nil?
+  new_key = File.open("#{le_cert_path}/privkey.pem").read.chop
+  new_cert = File.open("#{le_cert_path}/fullchain.pem").read.chop
+else
+  new_key = File.open("#{keypath}").read.chop
+  new_cert = File.open("#{fullchainpath}"}.read.chop
+end
 
 # First, let's verify the new cert/key are actually different
 if current_cert == new_cert
