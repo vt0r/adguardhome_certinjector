@@ -70,7 +70,7 @@ if options['keypath'].nil? || options['fullchainpath'].nil?
   new_cert = File.open("#{le_cert_path}/fullchain.pem").read.chop
 else
   new_key = File.open("#{keypath}").read.chop
-  new_cert = File.open("#{fullchainpath}"}.read.chop
+  new_cert = File.open("#{fullchainpath}").read.chop
 end
 
 # First, let's verify the new cert/key are actually different
